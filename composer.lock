@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "limbonia/limbonia-result",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/limboniatech/limbonia-result.git",
-                "reference": "d9ded6c109f1b3fd3d3bd237645144570a7318d5"
+                "reference": "12b6229d7ff6bbce8a3f66816551495343e8575e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/d9ded6c109f1b3fd3d3bd237645144570a7318d5",
-                "reference": "d9ded6c109f1b3fd3d3bd237645144570a7318d5",
+                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/12b6229d7ff6bbce8a3f66816551495343e8575e",
+                "reference": "12b6229d7ff6bbce8a3f66816551495343e8575e",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "This is the Limbonia Result library",
-            "time": "2019-10-25T05:16:56+00:00"
+            "time": "2019-10-25T05:27:14+00:00"
         }
     ],
     "packages-dev": [],
