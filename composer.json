@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^7.2",
-        "limbonia/limbonia-result": "^1.0"
+        "limboniatech/limbonia-base": "^1.0",
+        "limboniatech/limbonia-result": "^1.0"
     },
     "autoload": {
         "psr-4": {

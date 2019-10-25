@@ -4,20 +4,56 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a5e73658142827db977f1fc73ae4c7a3",
+    "content-hash": "547515841ec8ecd0d6ccaee8d29df424",
     "packages": [
         {
-            "name": "limbonia/limbonia-result",
+            "name": "limboniatech/limbonia-base",
             "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/limboniatech/limbonia-result.git",
-                "reference": "12b6229d7ff6bbce8a3f66816551495343e8575e"
+                "url": "https://github.com/limboniatech/limbonia-base.git",
+                "reference": "210432a24886b39ca350c4306d0a60c9dc1f488f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/12b6229d7ff6bbce8a3f66816551495343e8575e",
-                "reference": "12b6229d7ff6bbce8a3f66816551495343e8575e",
+                "url": "https://api.github.com/repos/limboniatech/limbonia-base/zipball/210432a24886b39ca350c4306d0a60c9dc1f488f",
+                "reference": "210432a24886b39ca350c4306d0a60c9dc1f488f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Limbonia\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Lonnie Blansett",
+                    "email": "lonnie@limbonia.tech"
+                }
+            ],
+            "description": "This is the Limbonia Base Library",
+            "time": "2019-10-25T20:59:51+00:00"
+        },
+        {
+            "name": "limboniatech/limbonia-result",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/limboniatech/limbonia-result.git",
+                "reference": "dae197fea42e025d43914d6567d39d4463a6bf0d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/dae197fea42e025d43914d6567d39d4463a6bf0d",
+                "reference": "dae197fea42e025d43914d6567d39d4463a6bf0d",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +76,7 @@
                 }
             ],
             "description": "This is the Limbonia Result library",
-            "time": "2019-10-25T05:27:14+00:00"
+            "time": "2019-10-25T20:56:16+00:00"
         }
     ],
     "packages-dev": [],
