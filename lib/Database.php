@@ -11,14 +11,19 @@ namespace Limbonia;
  */
 class Database extends \PDO
 {
-  use \Limbonia\Traits\HasController;
-
   /**
    * List of existing database objects
    *
    * @var array
    */
   private static $hDatabaseObjects = [];
+
+  /**
+   * List of database configuration settings
+   *
+   * @var array
+   */
+  protected static $hConfig = [];
 
   /**
    * List of time formats for use in filtering time values
@@ -372,14 +377,84 @@ class Database extends \PDO
   }
 
   /**
-   * Generate an instance of the Limbonia Database object based on the specified configuration
+   * Add either a single database config array or a hash of configs
    *
-   * @param array $hConfig
-   * @param \Limbonia\Controller $oController (optional)
+   * @param array $hConfig - Database configuration data
+   * @param string $sName(optional) - Name of the current configuration
+   */
+  public static function config(array $hConfig, $sName = null)
+  {
+    $hLowercaseConfig = array_change_key_case($hConfig, CASE_LOWER);
+
+    if (isset($hLowercaseConfig['driver']))
+    {
+      if (isset($hLowercaseConfig['name']))
+      {
+        $sName = $hLowercaseConfig['name'];
+        unset($hLowercaseConfig['name']);
+      }
+
+      ksort($hLowercaseConfig);
+
+      if (empty($sName))
+      {
+        $sName = md5(serialize($hLowercaseConfig));
+      }
+
+      //if this is the first config and it isn't already named default
+      if (count(self::$hConfig) === 0 && $sName !== 'default')
+      {
+        //then use it as the current default, though it can be overridden by a new config named 'default'
+        self::$hConfig['default'] = $hLowercaseConfig;
+      }
+
+      self::$hConfig[$sName] = $hLowercaseConfig;
+    }
+    else
+    {
+      foreach ($hConfig as $xIndex => $hSubconfig)
+      {
+        $sName = \is_string($xIndex) ? $xIndex : null;
+        self::addConfig($hSubconfig, $sName);
+      }
+    }
+  }
+
+  /**
+   * Generate and return a database object based on the specified database config section
+   *
+   * @param string $sSection (optional)
    * @throws \Limbonia\Exception\Database
    * @return \Limbonia\Database
    */
-  static public function factory(array $hConfig, \Limbonia\Controller $oController = null): \Limbonia\Database
+  public static function getDB($sSection = 'default')
+  {
+    if (empty(self::$hConfig))
+    {
+      throw new Exception\Database("Database not configured");
+    }
+
+    if (empty($sSection) || !isset(self::$hConfig[$sSection]))
+    {
+      $sSection = 'default';
+    }
+
+    if (!isset(self::$hConfig[$sSection]))
+    {
+      throw new Exception\Database("Default database not configured");
+    }
+
+    return self::factory(self::$hConfig[$sSection]);
+  }
+
+  /**
+   * Generate an instance of the Limbonia Database object based on the specified configuration
+   *
+   * @param array $hConfig
+   * @throws \Limbonia\Exception\Database
+   * @return \Limbonia\Database
+   */
+  static public function factory(array $hConfig): \Limbonia\Database
   {
     $hLowercaseConfig = array_change_key_case($hConfig, CASE_LOWER);
 
@@ -398,11 +473,6 @@ class Database extends \PDO
 
     $hDSN = self::arrayToDSN($hLowercaseConfig);
     self::$hDatabaseObjects[$sConfigHash] = new self($hDSN['dsn'], $hDSN['username'], $hDSN['password'], $hDSN['options']);
-
-    if (isset($oController))
-    {
-      self::$hDatabaseObjects[$sConfigHash]->setController($oController);
-    }
 
     return self::$hDatabaseObjects[$sConfigHash];
   }

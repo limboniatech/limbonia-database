@@ -13,7 +13,6 @@ namespace Limbonia;
 class Item implements \ArrayAccess, \Countable, \SeekableIterator
 {
   use \Limbonia\Traits\DriverList;
-  use \Limbonia\Traits\HasController;
   use \Limbonia\Traits\HasDatabase;
 
   /**
@@ -201,7 +200,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    */
   public static function getList($sType, $sQuery, Database $oDatabase = null)
   {
-    $oDatabase = $oDatabase instanceof \Limbonia\Database ? $oDatabase : \Limbonia\Controller::getDefault()->getDB();
+    $oDatabase = $oDatabase instanceof \Limbonia\Database ? $oDatabase : Database::getDB();
     $oList = new ItemList($sType, $oDatabase->query($sQuery));
     $oList->setDatabase($oDatabase);
     return $oList;
@@ -299,21 +298,6 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   public function __toString()
   {
     return $this->getAll();
-  }
-
-  /**
-   * Return this object's controller
-   *
-   * @return \Limbonia\Controller
-   */
-  public function getController(): \Limbonia\Controller
-  {
-    if (is_null($this->oController))
-    {
-      return $this->getDatabase()->getController();
-    }
-
-    return $this->oController;
   }
 
   /**
@@ -615,11 +599,11 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
 
         try
         {
-          $this->hItemObjects[$sLowerName] = $this->getController()->itemFromId($sType, $this->__get($sIDType));
+          $this->hItemObjects[$sLowerName] = self::fromId($sType, $this->__get($sIDType), $this->getDatabase());
         }
         catch (\Exception $e)
         {
-          $this->hItemObjects[$sLowerName] = $this->getController()->itemFactory($sType);
+          $this->hItemObjects[$sLowerName] = self::factory($sType, $this->getDatabase());
         }
       }
 

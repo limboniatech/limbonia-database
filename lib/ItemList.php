@@ -12,7 +12,6 @@ namespace Limbonia;
  */
 class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
 {
-  use \Limbonia\Traits\HasController;
   use \Limbonia\Traits\HasDatabase;
 
   /**
@@ -71,14 +70,7 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
       return null;
     }
 
-		$oItem = Item::fromArray($this->sTable, $hItem, $this->getDatabase());
-
-    if ($this->oController instanceof \Limbonia\Controller)
-    {
-      $oItem->setController($this->oController);
-    }
-
-    return $oItem;
+		return Item::fromArray($this->sTable, $hItem, $this->getDatabase());
 	}
 
   /**

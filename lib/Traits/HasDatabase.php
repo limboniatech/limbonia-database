@@ -2,7 +2,7 @@
 namespace Limbonia\Traits;
 
 /**
- * Limbonia HasController Trait
+ * Limbonia HasDatabase Trait
  *
  * This trait allows an inheriting class to have a database
  *
@@ -12,7 +12,7 @@ namespace Limbonia\Traits;
 trait HasDatabase
 {
   /**
-   * The controller for this object
+   * The database for this object
    *
    * @var \Limbonia\Database
    */
@@ -29,7 +29,7 @@ trait HasDatabase
   }
 
   /**
-   * Return this object's controller
+   * Return this object's database
    *
    * @return \Limbonia\Database
    */
@@ -37,7 +37,7 @@ trait HasDatabase
   {
     if (is_null($this->oDatabase))
     {
-      return \Limbonia\Controller::getDefault()->getDB();
+      return \Limbonia\Database::getDB();
     }
 
     return $this->oDatabase;
