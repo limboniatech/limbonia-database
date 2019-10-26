@@ -526,7 +526,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
     if (preg_match('/(.+?)List/', $sName, $aMatch))
     {
       $hColumn = $this->getColumn($aMatch[1]);
-      $sType = strtolower(Database::columnType($hColumn['Type']));
+      $sType = strtolower($hColumn['Type']);
 
       if (preg_match("#(.*?)\((.*?)\)#", $sType, $aMatch))
       {
@@ -543,6 +543,13 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
     $sExtra = null;
     $sType = $this->getColumnType($sName);
     $sRealName = $this->hasColumn($sName);
+
+    if (!$sRealName && strtolower($sName) == 'title')
+    {
+      $sType = $this->getColumnType('name');
+      $sRealName = $this->hasColumn('name');
+    }
+
     $xValue = $sRealName ? $this->hData[$sRealName] : '';
 
     if (preg_match("#(.*?)\((.*?)\)#", $sType, $aMatch))
@@ -645,6 +652,11 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   public function __isset($sName)
   {
     if ($this->hasColumn($sName))
+    {
+      return true;
+    }
+
+    if (strtolower($sName) == 'title' && $this->hasColumn('name'))
     {
       return true;
     }
