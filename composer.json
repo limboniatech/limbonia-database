@@ -11,12 +11,13 @@
     ],
     "require": {
         "php": "^7.2",
-        "limboniatech/limbonia-base": "^1.0",
-        "limboniatech/limbonia-result": "^1.0"
+        "limboniatech/limbonia-loader": "^1.0.3",
+        "limboniatech/limbonia-result": "^1.0.5"
     },
     "autoload": {
         "psr-4": {
             "Limbonia\\": "lib/"
-        }
+        },
+        "files": ["autoloader.php"]
     }
 }
