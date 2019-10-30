@@ -4,60 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "34d33a6013a77baa29a3fdbd2399640b",
+    "content-hash": "c2a05052186a8c2d6f55240535ba40b2",
     "packages": [
         {
-            "name": "limboniatech/limbonia-base",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/limboniatech/limbonia-base.git",
-                "reference": "2da98e81c6e9101fff22afcc9da196dfe95d604a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/limboniatech/limbonia-base/zipball/2da98e81c6e9101fff22afcc9da196dfe95d604a",
-                "reference": "2da98e81c6e9101fff22afcc9da196dfe95d604a",
-                "shasum": ""
-            },
-            "require": {
-                "limboniatech/limbonia-loader": "^1.0",
-                "php": "^7.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Limbonia\\": "lib/"
-                },
-                "files": [
-                    "lib/autoloader.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Lonnie Blansett",
-                    "email": "lonnie@limbonia.tech"
-                }
-            ],
-            "description": "This is the Limbonia Base Library",
-            "time": "2019-10-29T23:32:36+00:00"
-        },
-        {
             "name": "limboniatech/limbonia-loader",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/limboniatech/limbonia-loader.git",
-                "reference": "fd2128d4b95257eaf074997be18150dae3dac084"
+                "reference": "1927e2d89ce8b3bfa8ea573f7b88ed1502854843"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/limboniatech/limbonia-loader/zipball/fd2128d4b95257eaf074997be18150dae3dac084",
-                "reference": "fd2128d4b95257eaf074997be18150dae3dac084",
+                "url": "https://api.github.com/repos/limboniatech/limbonia-loader/zipball/1927e2d89ce8b3bfa8ea573f7b88ed1502854843",
+                "reference": "1927e2d89ce8b3bfa8ea573f7b88ed1502854843",
                 "shasum": ""
             },
             "require": {
@@ -80,24 +40,24 @@
                 }
             ],
             "description": "This is the Limbonia Loader",
-            "time": "2019-10-30T15:25:46+00:00"
+            "time": "2019-10-30T17:13:58+00:00"
         },
         {
             "name": "limboniatech/limbonia-result",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/limboniatech/limbonia-result.git",
-                "reference": "f66ee2359621af6c3468d17f68779cfd30bcb17a"
+                "reference": "d3a6580acbff0ac4ee22883f9ed2cee2e2668b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/f66ee2359621af6c3468d17f68779cfd30bcb17a",
-                "reference": "f66ee2359621af6c3468d17f68779cfd30bcb17a",
+                "url": "https://api.github.com/repos/limboniatech/limbonia-result/zipball/d3a6580acbff0ac4ee22883f9ed2cee2e2668b59",
+                "reference": "d3a6580acbff0ac4ee22883f9ed2cee2e2668b59",
                 "shasum": ""
             },
             "require": {
-                "limboniatech/limbonia-loader": "^1.0",
+                "limboniatech/limbonia-loader": "^1.0.3",
                 "php": "^7.2"
             },
             "type": "library",
@@ -120,7 +80,7 @@
                 }
             ],
             "description": "This is the Limbonia Result library",
-            "time": "2019-10-30T16:35:47+00:00"
+            "time": "2019-10-30T18:41:04+00:00"
         }
     ],
     "packages-dev": [],
