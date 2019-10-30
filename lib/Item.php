@@ -181,7 +181,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    * @param array $hItem
    * @param Database $oDatabase (optional)
    * @return Item
-   * @throws \Limbonia\Exception\Object
+   * @throws \Exception
    */
   public static function fromArray($sTable, $hItem, Database $oDatabase = null)
   {
@@ -196,7 +196,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    * @param string $sType
    * @param string $sQuery
    * @param Database $oDatabase (optional)
-   * @return \Limbonia\ItemList
+   * @return ItemList
    */
   public static function getList($sType, $sQuery, Database $oDatabase = null)
   {
@@ -213,7 +213,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    * @param array $hWhere - Where to search for the Items
    * @param string|array $xOrder - The order the Items should be returned
    * @param Database $oDatabase (optional) - The Database to perform the search in
-   * @return \Limbonia\ItemList
+   * @return ItemList
    */
   public static function search($sType, $hWhere = [], $xOrder = null, Database $oDatabase = null)
   {
@@ -223,9 +223,9 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   /**
    * The item constructor
    *
-   * @param \Limbonia\Database $oDatabase (optional)
+   * @param Database $oDatabase (optional)
    */
-  public function __construct(\Limbonia\Database $oDatabase = null)
+  public function __construct(Database $oDatabase = null)
   {
     $this->setDatabase($oDatabase);
 
@@ -239,12 +239,12 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   {
     if (empty($sTable))
     {
-      throw new Exception("Table not specified");
+      throw new \Exception("Table not specified");
     }
 
     if (!$this->getDatabase()->hasTable($sTable))
     {
-      throw new Exception("Table does not exist: $sTable");
+      throw new \Exception("Table does not exist: $sTable");
     }
 
     $this->sTable = $sTable;
@@ -270,20 +270,20 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   /**
    * Create the table required for this item type
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function setup()
   {
     if (get_class($this) == __CLASS__)
     {
-      throw new Exception("The base Item class can not set up tables!");
+      throw new \Exception("The base Item class can not set up tables!");
     }
 
     if (!$this->getDatabase()->hasTable($this->sTable))
     {
       if (empty(static::$sSchema))
       {
-        throw new Exception("Schema not found for table: $this->sTable");
+        throw new \Exception("Schema not found for table: $this->sTable");
       }
 
       $this->getDatabase()->createTable($this->sTable, static::$sSchema);
@@ -365,7 +365,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @param array $hItem - the data used to generate the item
    * @return array - the unused hash data that was passed in
-   * @throws \Limbonia\Exception
+   * @throws \Exception
    */
   public function setAll(array $hItem = [])
   {
@@ -382,7 +382,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
         if ($this->isCreated() && $hItem[$sKey] != $this->hData[$this->sIdColumn])
         {
           //then this is an override...
-          throw new \Limbonia\Exception("The existing $this->sType already has an ID of {$this->hData[$this->sIdColumn]} so it can't be changed to {$hItem[$sKey]}");
+          throw new \Exception("The existing $this->sType already has an ID of {$this->hData[$this->sIdColumn]} so it can't be changed to {$hItem[$sKey]}");
         }
 
         $this->__set($this->sIdColumn, $hItem[$sKey]);
@@ -765,7 +765,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    * Set the data for this object to the row of data specified by the given item id.
    *
    * @param integer $iItemID
-   * @throws Exception
+   * @throws \Exception
    */
   public function load($iItemID)
   {

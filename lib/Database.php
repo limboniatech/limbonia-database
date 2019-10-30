@@ -994,7 +994,7 @@ class Database extends \PDO
    * @param array $hWhere
    * @param string|array $xOrder
    * @return string
-   * @throws Exception
+   * @throws \Limbonia\Exception\Database
    */
   public function makeSearchQuery($sTable, $xColumns = null, $hWhere = [], $xOrder = null)
   {
