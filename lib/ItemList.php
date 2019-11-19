@@ -17,28 +17,28 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
   /**
    * Name of the table that the list items come from
    *
-	 * @var string
-	 */
-	protected $sTable = '';
+   * @var string
+   */
+  protected $sTable = '';
 
-	/**
+  /**
    * The database result object that contain the items
    *
-	 * @var \Limbonia\Interfaces\Result
-	 */
-	protected $oResult = null;
+   * @var \Limbonia\Interfaces\Result
+   */
+  protected $oResult = null;
 
-	/**
-	 * Constructor
-	 *
-	 * @param string $sTable - the name of the table that the list items come from.
-	 * @param \Limbonia\Interfaces\Result $oResult - the database result object that contain the items
-	 */
-	public function __construct($sTable, \Limbonia\Interfaces\Result $oResult)
-	{
-		$this->sTable = $sTable;
-		$this->oResult = $oResult;
-	}
+  /**
+   * Constructor
+   *
+   * @param string $sTable - the name of the table that the list items come from.
+   * @param \Limbonia\Interfaces\Result $oResult - the database result object that contain the items
+   */
+  public function __construct($sTable, \Limbonia\Interfaces\Result $oResult)
+  {
+    $this->sTable = $sTable;
+    $this->oResult = $oResult;
+  }
 
   /**
    * Return a hash of all items in this list indexed by their ID
@@ -58,20 +58,20 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
   }
 
     /**
-	 * Attempt to create and return an item based on the data
-	 *
-	 * @param array $hItem
-	 * @return Item
-	 */
-	protected function getItem(array $hItem = [])
-	{
+   * Attempt to create and return an item based on the data
+   *
+   * @param array $hItem
+   * @return Item
+   */
+  protected function getItem(array $hItem = [])
+  {
     if (empty($hItem))
     {
       return null;
     }
 
-		return Item::fromArray($this->sTable, $hItem, $this->getDatabase());
-	}
+    return Item::fromArray($this->sTable, $hItem, $this->getDatabase());
+  }
 
   /**
    * Set the specified array offset with the specified value
@@ -81,10 +81,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    * @param mixed $xOffset
    * @param mixed $xValue
    */
-	public function offsetset($xOffset, $xValue)
-	{
-		return $this->oResult->offsetset($xOffset, $xValue);
-	}
+  public function offsetset($xOffset, $xValue)
+  {
+    return $this->oResult->offsetset($xOffset, $xValue);
+  }
 
   /**
    * Unset the specified array offset
@@ -93,10 +93,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @param mixed $xOffset
    */
-	public function offsetUnset($xOffset)
-	{
-		return $this->oResult->offsetUnset($xOffset);
-	}
+  public function offsetUnset($xOffset)
+  {
+    return $this->oResult->offsetUnset($xOffset);
+  }
 
   /**
    * Does the specified array offset exist?
@@ -106,10 +106,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    * @param mixed $xOffset
    * @return boolean
    */
-	public function offsetExists($xOffset)
-	{
-		return $this->oResult->offsetExists($xOffset);
-	}
+  public function offsetExists($xOffset)
+  {
+    return $this->oResult->offsetExists($xOffset);
+  }
 
   /**
    * Return the value stored at the specified array offset
@@ -119,10 +119,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    * @param mixed $xOffset
    * @return mixed
    */
-	public function offsetget($xOffset)
-	{
-		return $this->getItem($this->oResult->offsetget($xOffset));
-	}
+  public function offsetget($xOffset)
+  {
+    return $this->getItem($this->oResult->offsetget($xOffset));
+  }
 
   /**
    * Return the number of columns represented by this object
@@ -131,10 +131,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @return integer
    */
-	public function count()
-	{
-		return $this->oResult->count();
-	}
+  public function count()
+  {
+    return $this->oResult->count();
+  }
 
   /**
    * Return the current value of this object's data
@@ -143,10 +143,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @return mixed
    */
-	public function current()
-	{
-		return $this->getItem($this->oResult->current());
-	}
+  public function current()
+  {
+    return $this->getItem($this->oResult->current());
+  }
 
   /**
    * Return the key of the current value of this object's data
@@ -155,30 +155,30 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @return mixed
    */
-	public function key()
-	{
-		return $this->oResult->key();
-	}
+  public function key()
+  {
+    return $this->oResult->key();
+  }
 
   /**
    * Move to the next value in this object's data
    *
    * @note This is an implementation detail of the Iterator Interface
    */
-	public function next()
-	{
-		$this->oResult->next();
-	}
+  public function next()
+  {
+    $this->oResult->next();
+  }
 
   /**
    * Rewind to the first item of this object's data
    *
    * @note This is an implementation detail of the Iterator Interface
    */
-	public function rewind()
-	{
-		$this->oResult->rewind();
-	}
+  public function rewind()
+  {
+    $this->oResult->rewind();
+  }
 
   /**
    * Is the current value valid?
@@ -187,10 +187,10 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @return boolean
    */
-	public function valid()
-	{
-		return $this->oResult->valid();
-	}
+  public function valid()
+  {
+    return $this->oResult->valid();
+  }
 
   /**
    * Move the value to the data represented by the specified key
@@ -200,8 +200,8 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    * @param mixed $xKey
    * @throws OutOfBoundsException
    */
-		public function seek($xKey)
-	{
-		$this->oResult->seek($xKey);
-	}
+    public function seek($xKey)
+  {
+    $this->oResult->seek($xKey);
+  }
 }

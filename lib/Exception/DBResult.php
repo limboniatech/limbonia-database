@@ -16,7 +16,7 @@ class DBResult extends Database
    *
    * @var string
    */
-	protected $sQuery = '';
+  protected $sQuery = '';
 
   /**
    * Construct a new exception
@@ -26,20 +26,20 @@ class DBResult extends Database
    * @param string $sQuery
    * @param integer $iCode (optional)
    */
-	public function __construct($sMessage, $sSQLType, $sQuery, $iCode = 0)
-	{
-		$this->sQuery = $sQuery;
+  public function __construct($sMessage, $sSQLType, $sQuery, $iCode = 0)
+  {
+    $this->sQuery = $sQuery;
 
-		parent::__construct($sMessage, $sSQLType, $iCode);
-	}
+    parent::__construct($sMessage, $sSQLType, $iCode);
+  }
 
   /**
    * Return the SQL query that ran / was running when the exception was generated
    *
    * @return string
    */
-	public function getquery()
-	{
-		return $this->sQuery;
-	}
+  public function getquery()
+  {
+    return $this->sQuery;
+  }
 }
