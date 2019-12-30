@@ -45,19 +45,19 @@ class Database extends \PDOStatement implements \Limbonia\Interfaces\Result, \Ar
     $this->setFetchMode(\PDO::FETCH_ASSOC);
   }
 
-	/**
-	 * Executes a prepared statement
+  /**
+   * Executes a prepared statement
    *
-	 * @param array $aInputParameters (optional) <p>
-	 * An array of values with as many elements as there are bound
-	 * parameters in the SQL statement being executed.
-	 * All values are treated as <b>PDO::PARAM_STR</b>.
-	 * </p>
+   * @param array $aInputParameters (optional) <p>
+   * An array of values with as many elements as there are bound
+   * parameters in the SQL statement being executed.
+   * All values are treated as <b>PDO::PARAM_STR</b>.
+   * </p>
    *
-	 * @return bool <b>true</b> on success or <b>false</b> on failure.
+   * @return bool <b>true</b> on success or <b>false</b> on failure.
    *
-	 * @link http://php.net/manual/en/pdostatement.execute.php
-	 */
+   * @link http://php.net/manual/en/pdostatement.execute.php
+   */
   public function execute($aInputParameters = null)
   {
     $bSuccess = parent::execute($aInputParameters);
@@ -102,26 +102,26 @@ class Database extends \PDOStatement implements \Limbonia\Interfaces\Result, \Ar
     return $this->oDatabase;
   }
 
-	/**
-	 * Fetches the next row from a result set
+  /**
+   * Fetches the next row from a result set
    *
-	 * @param int $iFetchStyle (optional) <p>
-	 * Controls how the next row will be returned to the caller. This value
-	 * must be one of the PDO::FETCH_* constants,
-	 * defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE
-	 * (which defaults to PDO::FETCH_ASSOC).
-	 * @param int $iCursorOrientation (optional) <p>
-	 * For a PDOStatement object representing a scrollable cursor, this
-	 * value determines which row will be returned to the caller. This value
-	 * must be one of the PDO::FETCH_ORI_* constants,
-	 * defaulting to PDO::FETCH_ORI_NEXT.
-	 * </p>
-	 * @param int $iCursorOffset (optional)
-	 * @return mixed The return value of this function on success depends on the fetch style. In
-	 * all cases, <b>false</b> is returned on failure.
+   * @param int $iFetchStyle (optional) <p>
+   * Controls how the next row will be returned to the caller. This value
+   * must be one of the PDO::FETCH_* constants,
+   * defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE
+   * (which defaults to PDO::FETCH_ASSOC).
+   * @param int $iCursorOrientation (optional) <p>
+   * For a PDOStatement object representing a scrollable cursor, this
+   * value determines which row will be returned to the caller. This value
+   * must be one of the PDO::FETCH_ORI_* constants,
+   * defaulting to PDO::FETCH_ORI_NEXT.
+   * </p>
+   * @param int $iCursorOffset (optional)
+   * @return mixed The return value of this function on success depends on the fetch style. In
+   * all cases, <b>false</b> is returned on failure.
    *
-	 * @link http://php.net/manual/en/pdostatement.fetch.php
-	 */
+   * @link http://php.net/manual/en/pdostatement.fetch.php
+   */
   public function fetch($iFetchStyle = null, $iCursorOrientation = \PDO::FETCH_ORI_NEXT, $iCursorOffset = 0)
   {
     if ($this->oDatabase->allowCursor())

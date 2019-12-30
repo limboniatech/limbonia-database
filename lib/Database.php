@@ -328,58 +328,58 @@ class Database extends \PDO
    */
   static public function arrayToDSN(array $hConfig = [])
   {
-  	$hDSN =
-  	[
-  		'dsn' => strtolower($hConfig['driver']) . ':',
-  		'username' => '',
-  		'password' => '',
-  		'options' => []
-  	];
-  	unset($hConfig['driver']);
+    $hDSN =
+    [
+      'dsn' => strtolower($hConfig['driver']) . ':',
+      'username' => '',
+      'password' => '',
+      'options' => []
+    ];
+    unset($hConfig['driver']);
 
-  	if (isset($hConfig['host']))
-  	{
-  	  $hDSN['dsn'] .= "host={$hConfig['host']}";
-  	  unset($hConfig['host']);
+    if (isset($hConfig['host']))
+    {
+      $hDSN['dsn'] .= "host={$hConfig['host']}";
+      unset($hConfig['host']);
 
-  	  if (isset($hConfig['port']))
-  	  {
-  	    $hDSN['dsn'] .= ";port={$hConfig['port']}";
-  	    unset($hConfig['port']);
-  	  }
-  	}
-  	elseif (isset($hConfig['unixsocket']))
-  	{
-  	  $hDSN['dsn'] .= "unix_socket={$hConfig['unixsocket']}";
-  	  unset($hConfig['unixsocket']);
-  	}
+      if (isset($hConfig['port']))
+      {
+        $hDSN['dsn'] .= ";port={$hConfig['port']}";
+        unset($hConfig['port']);
+      }
+    }
+    elseif (isset($hConfig['unixsocket']))
+    {
+      $hDSN['dsn'] .= "unix_socket={$hConfig['unixsocket']}";
+      unset($hConfig['unixsocket']);
+    }
 
-  	if (isset($hConfig['database']))
-  	{
-  	  $hDSN['dsn'] .= ";dbname={$hConfig['database']}";
-  	  unset($hConfig['database']);
-  	}
+    if (isset($hConfig['database']))
+    {
+      $hDSN['dsn'] .= ";dbname={$hConfig['database']}";
+      unset($hConfig['database']);
+    }
 
-  	if (isset($hConfig['charset']))
-  	{
-  	  $hDSN['dsn'] .= ";charset={$hConfig['charset']}";
-  	  unset($hConfig['charset']);
-  	}
+    if (isset($hConfig['charset']))
+    {
+      $hDSN['dsn'] .= ";charset={$hConfig['charset']}";
+      unset($hConfig['charset']);
+    }
 
-  	if (isset($hConfig['user']))
-  	{
-  	  $hDSN['username'] = $hConfig['user'];
-  	  unset($hConfig['user']);
-  	}
+    if (isset($hConfig['user']))
+    {
+      $hDSN['username'] = $hConfig['user'];
+      unset($hConfig['user']);
+    }
 
-  	if (isset($hConfig['password']))
-  	{
-  	  $hDSN['password'] = $hConfig['password'];
-  	  unset($hConfig['password']);
-  	}
+    if (isset($hConfig['password']))
+    {
+      $hDSN['password'] = $hConfig['password'];
+      unset($hConfig['password']);
+    }
 
-  	$hDSN['options'] = $hConfig;
-  	return $hDSN;
+    $hDSN['options'] = $hConfig;
+    return $hDSN;
   }
 
   /**
@@ -465,11 +465,11 @@ class Database extends \PDO
     $hLowercaseConfig = array_change_key_case($hConfig, CASE_LOWER);
 
     if (empty($hLowercaseConfig['driver']))
-  	{
-  		throw new Exception\Database('A valid SQL driver name was not found!');
-  	}
+    {
+      throw new Exception\Database('A valid SQL driver name was not found!');
+    }
 
-  	ksort($hLowercaseConfig);
+    ksort($hLowercaseConfig);
     $sConfigHash = md5(serialize($hLowercaseConfig));
 
     if (isset(self::$hDatabaseObjects[$sConfigHash]))
@@ -499,31 +499,31 @@ class Database extends \PDO
     $this->bAllowCursor = !in_array($this->getType(), self::CURSOR_BLACKLIST);
   }
 
-	/**
-	 * Prepares a statement for execution and returns a statement object
+  /**
+   * Prepares a statement for execution and returns a statement object
    *
-	 * @param string $sStatement <p>
-	 * This must be a valid SQL statement template for the target database server.
-	 * </p>
-	 * @param array $hDriverOptions (optional) <p>
-	 * This array holds one or more key=&gt;value pairs to set
-	 * attribute values for the PDOStatement object that this method
-	 * returns. You would most commonly use this to set the
-	 * PDO::ATTR_CURSOR value to
-	 * PDO::CURSOR_SCROLL to request a scrollable cursor.
-	 * Some drivers have driver specific options that may be set at
-	 * prepare-time.
-	 * </p>
-	 * @return \Limbonia\Result\Database If the database server successfully prepares the statement,
-	 * <b>PDO::prepare</b> returns a
-	 * <b>PDOStatement</b> object.
-	 * If the database server cannot successfully prepare the statement,
-	 * <b>PDO::prepare</b> returns <b>FALSE</b> or emits
-	 * <b>PDOException</b> (depending on error handling).
-	 * </p>
+   * @param string $sStatement <p>
+   * This must be a valid SQL statement template for the target database server.
+   * </p>
+   * @param array $hDriverOptions (optional) <p>
+   * This array holds one or more key=&gt;value pairs to set
+   * attribute values for the PDOStatement object that this method
+   * returns. You would most commonly use this to set the
+   * PDO::ATTR_CURSOR value to
+   * PDO::CURSOR_SCROLL to request a scrollable cursor.
+   * Some drivers have driver specific options that may be set at
+   * prepare-time.
+   * </p>
+   * @return \Limbonia\Result\Database If the database server successfully prepares the statement,
+   * <b>PDO::prepare</b> returns a
+   * <b>PDOStatement</b> object.
+   * If the database server cannot successfully prepare the statement,
+   * <b>PDO::prepare</b> returns <b>FALSE</b> or emits
+   * <b>PDOException</b> (depending on error handling).
+   * </p>
    *
-	 * @link http://php.net/manual/en/pdo.prepare.php
-	 */
+   * @link http://php.net/manual/en/pdo.prepare.php
+   */
   public function prepare($sStatement, $hDriverOptions = null)
   {
     if ($this->bAllowCursor)
@@ -545,22 +545,22 @@ class Database extends \PDO
     return parent::prepare($sStatement, $hDriverOptions);
   }
 
-	/**
-	 * Executes an SQL statement, returning a result set as a PDOStatement object
+  /**
+   * Executes an SQL statement, returning a result set as a PDOStatement object
    *
-	 * @param string $sStatement <p>
-	 * The SQL statement to prepare and execute.
-	 * </p>
-	 * @param array $aInputParameters (optional) <p>
-	 * An array of values with as many elements as there are bound
-	 * parameters in the SQL statement being executed.
-	 * All values are treated as <b>PDO::PARAM_STR</b>.
-	 * </p>
+   * @param string $sStatement <p>
+   * The SQL statement to prepare and execute.
+   * </p>
+   * @param array $aInputParameters (optional) <p>
+   * An array of values with as many elements as there are bound
+   * parameters in the SQL statement being executed.
+   * All values are treated as <b>PDO::PARAM_STR</b>.
+   * </p>
    *
-	 * @return \Limbonia\Result\Database returns a \Limbonia\Result\Database object on success, or <b>false</b> on failure.
+   * @return \Limbonia\Result\Database returns a \Limbonia\Result\Database object on success, or <b>false</b> on failure.
    *
-	 * @link http://php.net/manual/en/pdo.query.php
-	 */
+   * @link http://php.net/manual/en/pdo.query.php
+   */
   public function query(string $sStatement, array $aInputParameters = [])
   {
     $oResult = $this->prepare($sStatement);

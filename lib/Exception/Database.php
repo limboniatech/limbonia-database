@@ -16,7 +16,7 @@ class Database extends \Exception
    *
    * @var string
    */
-	protected $sSQLType = null;
+  protected $sSQLType = null;
 
   /**
    * Construct a new exception
@@ -25,19 +25,19 @@ class Database extends \Exception
    * @param string $sSQLType (optional) The SQL driver being used, if there is one
    * @param integer $iCode (optional) The error code, if there is one
    */
-	public function __construct($sMessage, $sSQLType = "Unknown", $iCode = 0)
-	{
-		$this->sSQLType = $sSQLType;
-		parent::__construct($sMessage, $iCode);
-	}
+  public function __construct($sMessage, $sSQLType = "Unknown", $iCode = 0)
+  {
+    $this->sSQLType = $sSQLType;
+    parent::__construct($sMessage, $iCode);
+  }
 
   /**
    * Return the SQL server type
    *
    * @return string
    */
-	public function getType()
-	{
-		return $this->sSQLType;
-	}
+  public function getType()
+  {
+    return $this->sSQLType;
+  }
 }
