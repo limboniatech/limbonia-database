@@ -51,7 +51,7 @@ class Database extends \PDO
    *
    * @var array
    */
-  protected $aTableList = [];
+  protected $aTableList = null;
 
   /**
    * List of columns per table
@@ -152,6 +152,12 @@ class Database extends \PDO
     return self::columnIs($xData, 'char|binary|blob|text|string|enum') || self::columnIsDate($xData);
   }
 
+  /**
+   * Return the list of aliases for the given columns
+   *
+   * @param array $hColumns
+   * @return array
+   */
   public static function aliasColumns(array $hColumns = [])
   {
     $hAlias = [];
@@ -174,7 +180,7 @@ class Database extends \PDO
    *
    * @param string|array $xType - Either and array of column data or the actual column type
    * @param mixed $xValue
-   * @return type
+   * @return mixed
    */
   public static function filterValue($xType, $xValue)
   {
@@ -380,7 +386,7 @@ class Database extends \PDO
    * Add either a single database config array or a hash of configs
    *
    * @param array $hConfig - Database configuration data
-   * @param string $sName(optional) - Name of the current configuration
+   * @param string $sName (optional) - Name of the current configuration
    */
   public static function config(array $hConfig, $sName = null)
   {
@@ -415,7 +421,7 @@ class Database extends \PDO
       foreach ($hConfig as $xIndex => $hSubconfig)
       {
         $sName = \is_string($xIndex) ? $xIndex : null;
-        self::addConfig($hSubconfig, $sName);
+        self::config($hSubconfig, $sName);
       }
     }
   }
@@ -582,28 +588,66 @@ class Database extends \PDO
     return $this->bAllowCursor;
   }
 
-  public function getSchema($sTable)
+  /**
+   * The MySQL implementation for the getSchema method
+   *
+   * @param string $sTable
+   * @return string
+   */
+  protected function mysqlGetSchema($sTable)
   {
-    switch ($this->getType())
-    {
-      case 'mysql':
-        //show create table User;
-        $sShowCreateSQL = "SHOW CREATE TABLE $sTable";
-        break;
-
-      default:
-        throw new Exception\Database(__METHOD__ . ": Can not get the schema of this type, yet.", $this->getType());
-    }
-
+    $sShowCreateSQL = "SHOW CREATE TABLE $sTable";
     $oResult = $this->query($sShowCreateSQL);
     return preg_replace("#  #", '', preg_replace("#\n\) ENGINE=.*$#", '', preg_replace("#^.*CREATE TABLE `$sTable` \(\n#", '', $oResult->fetchAll()[0]['Create Table'])));
+  }
+
+  /**
+   * Returns a schema description of the specified table
+   *
+   * @param string $sTable
+   * @return string
+   * @throws Exception\Database
+   */
+  public function getSchema($sTable)
+  {
+    $sMethod = $this->getType() . 'GetDatabases';
+
+    if (!method_exists($this, $sMethod))
+    {
+      throw new Exception\Database(__METHOD__ . ": Can not get the schema of this type, yet.", $this->getType());
+    }
+
+    return $this->$sMethod($sTable);
+  }
+
+  /**
+   * The MySQL implementation for the createTable method
+   *
+   * @param string $sName - name for the table to create
+   * @param string $sSchema
+   * @param string $sDatabase (optional) - name of the database to create the table in, defaults to the "current" database for the connection
+   * @throws Exception\Database
+   */
+  protected function mysqlCreateTable($sName, $sSchema, $sDatabase = '')
+  {
+    if (!empty($sDatabase))
+    {
+      $sDatabase .= '.';
+    }
+
+    $sCreateSQL = "CREATE TABLE IF NOT EXISTS $sDatabase$sName ($sSchema)";
+
+    if (false === $this->exec($sCreateSQL))
+    {
+      throw new Exception\Database(__METHOD__ . ": Faied to create table: $sName.", $this->getType());
+    }
   }
 
   /**
    * Create a new table based on the specified parameters
    *
    * @param string $sName - name for the table to create
-   * @param type $sSchema
+   * @param string $sSchema
    * @param string $sDatabase (optional) - name of the database to create the table in, defaults to the "current" database for the connection
    * @throws Exception\Database
    */
@@ -614,23 +658,41 @@ class Database extends \PDO
       return;
     }
 
-    switch ($this->getType())
+    $sMethod = $this->getType() . 'CreateTable';
+
+    if (!method_exists($this, $sMethod))
     {
-      case 'mysql':
-        if (!empty($sDatabase))
-        {
-          $sDatabase .= '.';
-        }
-
-        $sCreateSQL = "CREATE TABLE IF NOT EXISTS $sDatabase$sName ($sSchema)";
-        break;
-
-      default:
-        throw new Exception\Database(__METHOD__ . ": Can not create tables of this type, yet.", $this->getType());
+      throw new Exception\Database(__METHOD__ . ": Can not create tables of this type, yet.", $this->getType());
     }
 
-    $this->exec($sCreateSQL);
+    $this->$sMethod($sName, $sSchema, $sDatabase);
+
+    if (is_null($this->aTableList))
+    {
+      $this->aTableList = [];
+    }
+
     $this->aTableList[] = $sName;
+  }
+
+  /**
+   * The MySQL implementation for the getDatabases method
+   *
+   * @return array
+   * @throws Exception\Database
+   */
+  protected function mysqlGetDatabases()
+  {
+    $sDatabasesSQL = 'SHOW DATABASES';
+    $oDatabases = $this->query($sDatabasesSQL);
+    $aDatabases = [];
+
+    foreach ($oDatabases as $hRow)
+    {
+      $aDatabases[] = array_shift($hRow);
+    }
+
+    return $aDatabases;
   }
 
   /**
@@ -641,25 +703,14 @@ class Database extends \PDO
    */
   public function getDatabases()
   {
-    switch ($this->getType())
-    {
-      case 'mysql':
-        $sDatabasesSQL = 'SHOW DATABASES';
-        break;
+    $sMethod = $this->getType() . 'GetDatabases';
 
-      default:
-        throw new Exception\Database(__METHOD__ . ": Can not list databases of this type, yet.", $this->getType());
+    if (!method_exists($this, $sMethod))
+    {
+      throw new Exception\Database(__METHOD__ . ": Can not list databases of this type, yet.", $this->getType());
     }
 
-    $oDatabases = $this->query($sDatabasesSQL);
-    $aDatabases = [];
-
-    foreach ($oDatabases as $hRow)
-    {
-      $aDatabases[] = array_shift($hRow);
-    }
-
-    return $aDatabases;
+    return $this->$sMethod();
   }
 
   /**
@@ -676,6 +727,27 @@ class Database extends \PDO
   }
 
   /**
+   * The MySQL implementation for the getTables method
+   *
+   * @param string $sDatabase (optional) - the database used to get the table list (if none is specified then use the "current" database)
+   * @return array
+   * @throws Exception\Database
+   */
+  protected function mysqlGetTables($sDatabase = '')
+  {
+    $aTableList = [];
+    $sTableSQL = empty($sDatabase) ? 'SHOW TABLES' : "SHOW TABLES FROM $sDatabase";
+    $oGetTables = $this->query($sTableSQL);
+
+    foreach ($oGetTables as $aRow)
+    {
+      $aTableList[] = array_shift($aRow);
+    }
+
+    return $aTableList;
+  }
+
+  /**
    * Generate the array of table names in the specified database
    *
    * @param string $sDatabase (optional) - the database used to get the table list (if none is specified then use the "current" database)
@@ -684,31 +756,61 @@ class Database extends \PDO
    */
   public function getTables($sDatabase = '')
   {
-    if (count($this->aTableList) == 0)
+    if (is_null($this->aTableList))
     {
-      switch ($this->getType())
-      {
-        case 'mysql':
-          $sTableSQL = empty($sDatabase) ? 'SHOW TABLES' : "SHOW TABLES FROM $sDatabase";
-          break;
+      $this->aTableList = [];
+      $sMethod = $this->getType() . 'GetTables';
 
-        default:
-          throw new Exception\Database(__METHOD__ . ": Can not list tables from this type, yet.", $this->getType());
+      if (!method_exists($this, $sMethod))
+      {
+        throw new Exception\Database(__METHOD__ . ": Can not list tables from this type, yet.", $this->getType());
       }
 
-      $oGetTables = $this->query($sTableSQL);
-
-      foreach ($oGetTables as $aRow)
-      {
-        $this->aTableList[] = array_shift($aRow);
-      }
+      $this->aTableList = $this->$sMethod($sDatabase);
     }
 
     return $this->aTableList;
   }
 
   /**
-   * Generate the list of column data from the specified tablee
+   * The MySQL implementation for the getColumns method
+   *
+   * @param string $sTable - name of the table to get column data from
+   * @param boolean $bUseTableName (optional) - Should the table name be prepended to each column name (defaults to false)
+   * @return array
+   * @throws \Limbonia\Exception\Database
+   */
+  protected function mysqlGetColumns($sTable)
+  {
+    $sColumnSQL = "DESC $sTable";
+    $oGetColumns = $this->query($sColumnSQL);
+    $hColumnList = [];
+
+    foreach ($oGetColumns as $hRow)
+    {
+      $hColumnList[$hRow['Field']]['Type'] = $hRow['Type'];
+      $hRow['Key'] = trim($hRow['Key']);
+
+      if (!empty($hRow['Key']))
+      {
+        $hColumnList[$hRow['Field']]['Key'] = str_replace('PRI', 'Primary', $hRow['Key']);
+        $hColumnList[$hRow['Field']]['Key'] = str_replace('MUL', 'Multi', $hColumnList[$hRow['Field']]['Key']);
+      }
+
+      $hColumnList[$hRow['Field']]['Default'] = trim($hRow['Default']);
+      $hRow['Extra'] = trim($hRow['Extra']);
+
+      if (!empty($hRow['Extra']))
+      {
+        $hColumnList[$hRow['Field']]['Extra'] = $hRow['Extra'];
+      }
+    }
+
+    return $hColumnList;
+  }
+
+  /**
+   * Generate the list of column data from the specified table
    *
    * @param string $sTable - name of the table to get column data from
    * @param boolean $bUseTableName (optional) - Should the table name be prepended to each column name (defaults to false)
@@ -719,52 +821,21 @@ class Database extends \PDO
   {
     if (!isset(self::$hColumnList[$sTable]))
     {
+      unset($_SESSION['LimboniaTableColumns'][$sTable]);
       if (SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumns'][$sTable]))
       {
         self::$hColumnList[$sTable] = $_SESSION['LimboniaTableColumns'][$sTable];
       }
       else
       {
-        switch ($this->getType())
-        {
-          case 'mysql':
-            $sColumnSQL = "DESC $sTable";
-            break;
+        $sMethod = $this->getType() . 'GetColumns';
 
-          default:
-            throw new Exception\Database(__METHOD__ . ": Can not list columns from this database type, yet.", $this->getType());
+        if (!method_exists($this, $sMethod))
+        {
+          throw new Exception\Database(__METHOD__ . ": Can not list columns from this database type, yet.", $this->getType());
         }
 
-        try
-        {
-          $oGetColumns = $this->query($sColumnSQL);
-        }
-        catch (\PDOException $e)
-        {
-          return [];
-        }
-
-        self::$hColumnList[$sTable] = [];
-
-        foreach ($oGetColumns as $hRow)
-        {
-          self::$hColumnList[$sTable][$hRow['Field']]['Type'] = $hRow['Type'];
-          $hRow['Key'] = trim($hRow['Key']);
-
-          if (!empty($hRow['Key']))
-          {
-            self::$hColumnList[$sTable][$hRow['Field']]['Key'] = str_replace('PRI', 'Primary', $hRow['Key']);
-            self::$hColumnList[$sTable][$hRow['Field']]['Key'] = str_replace('MUL', 'Multi', self::$hColumnList[$sTable][$hRow['Field']]['Key']);
-          }
-
-          self::$hColumnList[$sTable][$hRow['Field']]['Default'] = trim($hRow['Default']);
-          $hRow['Extra'] = trim($hRow['Extra']);
-
-          if (!empty($hRow['Extra']))
-          {
-            self::$hColumnList[$sTable][$hRow['Field']]['Extra'] = $hRow['Extra'];
-          }
-        }
+        self::$hColumnList[$sTable] = $this->$sMethod($sTable);
 
         if (SessionManager::isStarted())
         {

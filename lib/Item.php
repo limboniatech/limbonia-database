@@ -159,6 +159,17 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   }
 
   /**
+   * Generate and return an empty item object based on the current sub-class
+   *
+   * @param Database $oDatabase (optional)
+   * @return Item
+   */
+  public static function typeFactory(Database $oDatabase = null)
+  {
+    return static::factory(static::type(), $oDatabase);
+  }
+
+  /**
    * Generate and return an item object filled with data from the specified table id
    *
    * @param string $sTable
@@ -175,6 +186,20 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
   }
 
   /**
+   * Generate and return an item object based on the current sub-class and
+   * filled with data from the specified table id
+   *
+   * @param integer $iItem
+   * @param Database $oDatabase (optional)
+   * @throws \Limbonia\Exception\Database
+   * @return Item
+   */
+  public static function typeFromId($iItem, Database $oDatabase = null)
+  {
+    return static::fromId(static::type(), $iItem, $oDatabase);
+  }
+
+  /**
    * Generate and return an item object filled with data from the specified array
    *
    * @param string $sTable
@@ -183,11 +208,25 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    * @return Item
    * @throws \Exception
    */
-  public static function fromArray($sTable, $hItem, Database $oDatabase = null)
+  public static function fromArray($sTable, array $hItem, Database $oDatabase = null)
   {
-    $oItem = self::factory($sTable, $oDatabase);
+    $oItem = static::factory($sTable, $oDatabase);
     $oItem->setAll($hItem);
     return $oItem;
+  }
+
+  /**
+   * Generate and return an item object based on the current sub-class and
+   * filled with data from the specified array
+   *
+   * @param array $hItem
+   * @param Database $oDatabase (optional)
+   * @return \Limbonia\Item
+   * @throws \Exception
+   */
+  public static function typeFromArray(array $hItem, Database $oDatabase = null)
+  {
+    return static::fromArray(static::type(), $hItem, $oDatabase);
   }
 
   /**
@@ -200,10 +239,22 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    */
   public static function getList($sType, $sQuery, Database $oDatabase = null)
   {
-    $oDatabase = $oDatabase instanceof \Limbonia\Database ? $oDatabase : Database::getDB();
+    $oDatabase = $oDatabase instanceof Database ? $oDatabase : Database::getDB();
     $oList = new ItemList($sType, $oDatabase->query($sQuery));
     $oList->setDatabase($oDatabase);
     return $oList;
+  }
+
+  /**
+   * Generate an item list based on the current sub-class and and specified SQL query
+   *
+   * @param string $sQuery
+   * @param Database $oDatabase (optional)
+   * @return ItemList
+   */
+  public static function typeList($sQuery = '', Database $oDatabase = null)
+  {
+    return static::getList(static::type(), $sQuery, $oDatabase);
   }
 
   /**
@@ -211,13 +262,26 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    *
    * @param string $sType - The type of Item to search for
    * @param array $hWhere - Where to search for the Items
-   * @param string|array $xOrder - The order the Items should be returned
+   * @param string|array $xOrder (optional) - The order the Items should be returned
    * @param Database $oDatabase (optional) - The Database to perform the search in
    * @return ItemList
    */
   public static function search($sType, $hWhere = [], $xOrder = null, Database $oDatabase = null)
   {
     return self::getList($sType, self::factory($sType, $oDatabase)->makeSearchQuery($hWhere, $xOrder), $oDatabase);
+  }
+
+  /**
+   * Generate an item list based on the current sub-class and specified search criteria
+   *
+   * @param array $hWhere - Where to search for the Items
+   * @param string|array $xOrder (optional) - The order the Items should be returned
+   * @param Database $oDatabase (optional) - The Database to perform the search in
+   * @return ItemList
+   */
+  public static function typeSearch($hWhere = [], $xOrder = null, Database $oDatabase = null)
+  {
+    return static::typeList(static::typeFactory($oDatabase)->makeSearchQuery($hWhere, $xOrder), $oDatabase);
   }
 
   /**
@@ -231,10 +295,21 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
 
     if (empty($this->sTable))
     {
-      $this->sTable = preg_replace("/Override$/", '', str_replace(__CLASS__ . '\\', '', get_class($this)));
+      $sTable = preg_replace("/Override$/", '', static::type());
+
+      if (!empty($sTable))
+      {
+        $this->setTable($sTable);
+      }
     }
   }
 
+  /**
+   * Set the table for the current instance of this item
+   *
+   * @param string $sTable
+   * @throws \Exception
+   */
   protected function setTable($sTable)
   {
     if (empty($sTable))
@@ -242,21 +317,24 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
       throw new \Exception("Table not specified");
     }
 
+    $this->sTable = $sTable;
+
     if (!$this->getDatabase()->hasTable($sTable))
     {
-      throw new \Exception("Table does not exist: $sTable");
+      $this->setup();
     }
-
-    $this->sTable = $sTable;
 
     if (empty($this->sIdColumn))
     {
       $this->sIdColumn = $this->hasColumn('id');
     }
 
-    $this->aNoUpdate[] = $this->sIdColumn;
+    if (empty($this->sIdColumn))
+    {
+      $this->aNoUpdate[] = $this->sIdColumn;
+    }
 
-    if (empty(static::$hDefaultData))
+    if (empty(self::$hDefaultData[$this->sTable]))
     {
       foreach ($this->getColumns() as $sColumn => $hColumnData)
       {
@@ -264,7 +342,10 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
       }
     }
 
-    $this->hData = static::$hDefaultData[$this->sTable];
+    if (empty($this->hData))
+    {
+      $this->hData = self::$hDefaultData[$this->sTable];
+    }
   }
 
   /**
@@ -274,7 +355,7 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    */
   public function setup()
   {
-    if (get_class($this) == __CLASS__)
+    if (static::type() == '')
     {
       throw new \Exception("The base Item class can not set up tables!");
     }
@@ -307,12 +388,12 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    */
   public function getColumns()
   {
-    if (empty(static::$hColumns))
+    if (empty(self::$hColumns[$this->sTable]))
     {
-      static::$hColumns = $this->getDatabase()->getColumns($this->sTable);
+      self::$hColumns[$this->sTable] = $this->getDatabase()->getColumns($this->sTable);
     }
 
-    return static::$hColumns;
+    return self::$hColumns[$this->sTable];
   }
 
   /**
@@ -634,13 +715,13 @@ class Item implements \ArrayAccess, \Countable, \SeekableIterator
    */
   public function hasColumn($sColumn)
   {
-    if (empty(static::$hColumnAlias))
+    if (empty(self::$hColumnAlias[$this->sTable]))
     {
-      static::$hColumnAlias = \Limbonia\Database::aliasColumns($this->getColumns());
+      self::$hColumnAlias[$this->sTable] = \Limbonia\Database::aliasColumns($this->getColumns());
     }
 
     $sLowerColumn = \strtolower($sColumn);
-    return isset(static::$hColumnAlias[$sLowerColumn]) ? static::$hColumnAlias[$sLowerColumn] : false;
+    return isset(self::$hColumnAlias[$this->sTable][$sLowerColumn]) ? self::$hColumnAlias[$this->sTable][$sLowerColumn] : false;
   }
 
   /**
