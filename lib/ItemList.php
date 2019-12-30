@@ -57,7 +57,7 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
     return $hList;
   }
 
-    /**
+  /**
    * Attempt to create and return an item based on the data
    *
    * @param array $hItem
@@ -200,7 +200,7 @@ class ItemList implements \ArrayAccess, \Countable, \SeekableIterator
    * @param mixed $xKey
    * @throws OutOfBoundsException
    */
-    public function seek($xKey)
+  public function seek($xKey)
   {
     $this->oResult->seek($xKey);
   }
