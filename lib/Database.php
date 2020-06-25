@@ -821,7 +821,6 @@ class Database extends \PDO
   {
     if (!isset(self::$hColumnList[$sTable]))
     {
-      unset($_SESSION['LimboniaTableColumns'][$sTable]);
       if (SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumns'][$sTable]))
       {
         self::$hColumnList[$sTable] = $_SESSION['LimboniaTableColumns'][$sTable];
