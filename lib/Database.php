@@ -821,7 +821,7 @@ class Database extends \PDO
   {
     if (!isset(self::$hColumnList[$sTable]))
     {
-      if (SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumns'][$sTable]))
+      if (class_exists('\Limbonia\SessionManager') && SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumns'][$sTable]))
       {
         self::$hColumnList[$sTable] = $_SESSION['LimboniaTableColumns'][$sTable];
       }
@@ -836,7 +836,7 @@ class Database extends \PDO
 
         self::$hColumnList[$sTable] = $this->$sMethod($sTable);
 
-        if (SessionManager::isStarted())
+        if (class_exists('\Limbonia\SessionManager') && SessionManager::isStarted())
         {
           if (!isset($_SESSION['LimboniaTableColumns']))
           {
@@ -876,7 +876,7 @@ class Database extends \PDO
       return $this->hColumnAlias[$sTable];
     }
 
-    if (SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumnAlias'][$sTable]))
+    if (class_exists('\Limbonia\SessionManager') && SessionManager::isStarted() && isset($_SESSION['LimboniaTableColumnAlias'][$sTable]))
     {
       $this->hColumnAlias[$sTable] = $_SESSION['LimboniaTableColumnAlias'][$sTable];
       return $this->hColumnAlias[$sTable];
@@ -884,7 +884,7 @@ class Database extends \PDO
 
     $this->hColumnAlias[$sTable] = self::aliasColumns($this->getColumns($sTable));
 
-    if (SessionManager::isStarted())
+    if (class_exists('\Limbonia\SessionManager') && SessionManager::isStarted())
     {
       $_SESSION['LimboniaTableColumnAlias'][$sTable] = $this->hColumnAlias[$sTable];
     }
